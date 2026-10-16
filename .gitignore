@@ -1,0 +1,48 @@
+# ==============================================================================
+# Git Ignore for Medical-Electrical-Stimulator-STM32
+# ==============================================================================
+
+# Keil MDK-ARM Build Artifacts
+*.o
+*.d
+*.crf
+*.lst
+*.map
+*.axf
+*.lnp
+*.build_log.htm
+*.dep
+*.iex
+*.orig
+build.log
+flash.log
+build_log.txt
+flash_log.txt
+
+# Keil MDK-ARM User Configuration & Session Cache
+*.uvguix.*
+*.uvoptx.bak
+*.uvprojx.bak
+JLinkLog.txt
+JLinkSettings.ini
+
+# Keep precompiled binary firmware
+!*.hex
+!*.soc
+
+# OS Generated Files
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# IDE & Editor Specific Files
+.vscode/
+.idea/
+*.swp
+*~
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
