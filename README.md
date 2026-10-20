@@ -4,7 +4,7 @@
 
 A teaching and engineering prototype from the Intelligent Medical Practice course at Nanjing University of Aeronautics and Astronautics. The system integrates an STM32F103RCT6, a Howland current source, a UART touchscreen and an ESP32-C3.
 
-Maintainer: **Shen Gao / 高申 (Doooooooove)**. The maintainer reports independently completing hardware assembly and soldering, firmware integration, touchscreen and wireless integration, oscilloscope measurements and calibration, with AI assistance for code development.
+Maintainer: **Shen Gao / 高申 (Doooooooove)**. The maintainer reports independently completing hardware assembly and soldering, firmware integration, touchscreen and wireless integration, oscilloscope measurements and calibration, with AI assistance for code development. The maintainer has compiled the project in Keil and completed physical prototype measurements.
 
 > This repository documents a teaching prototype and resistor-load bench work. It does not establish clinical efficacy, medical-device certification or IEC 60601 compliance.
 
@@ -68,7 +68,7 @@ python3 tools/calibration_summary.py
 3. Compile the [touchscreen project](hmi/README.md), confirming a 9600 bps UART configuration.
 4. Load the [ESP32-C3 software](wireless/readme.md), join its Wi-Fi network and open the gateway address assigned by the module.
 
-Existing HEX files are historical build outputs, not verified builds of the current source. The source currently starts in a running state and resets its countdown after zero. Review the behavior and remaining bench checks in [validation.md](docs/validation.md) before operating the prototype.
+The repository includes the maintainer’s HEX build outputs. This documentation pass did not rebuild the firmware or independently match each HEX file to its source revision. The source currently starts in a running state and resets its countdown after zero. Review the behavior and remaining bench checks in [validation.md](docs/validation.md) before operating the prototype.
 
 ## Repository map
 
