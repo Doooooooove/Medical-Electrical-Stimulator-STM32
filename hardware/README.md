@@ -1,20 +1,36 @@
-# Hardware Design & Schematics
+# 硬件资料与连接
 
-## 📁 Files Included
-- `电流板原理图_Howland恒流源.pdf`:
-  - Schematic of the **54V High-Voltage Howland Voltage-Controlled Current Source (VCCS)**.
-  - Core ICs: **TI LM5158** (Wide-input boost converter stepping up to 54V compliant rail) and **TI OPA551** (High-voltage 60V, high-slew-rate operational amplifier).
-  - High-precision low-drift sense resistor network and 104.7kΩ impedance divider sensing circuit.
-- `STM32F103RCT6核心板原理图.pdf`:
-  - Schematic of the main MCU controller board (STM32F103RCT6, 64-pin LQFP, crystal oscillator, reset, SWD, USB-UART CH340C, power supply regulation).
-- `电流板PCB_3D.pdf`:
-  - 3D PCB layout and visualization file for the current driver board.
+## 已包含的资料
 
-## ⚡ Key Circuit Specifications
-| Parameter | Value | Note |
-| :--- | :--- | :--- |
-| Boost Converter Rail | +54V DC | Driven by LM5158 |
-| Op-Amp Supply | Dual / Unipolar High Voltage | OPA551 (60V max rating) |
-| Output Current Range | 0.0 ~ 10.0 mA | Step: 0.1 ~ 1.0 mA |
-| Compliance Voltage | > 50V | Supports up to 5kΩ load @ 10mA |
-| Impedance Sampling | 100kΩ + 4.7kΩ | Attenuation ratio 1:22.27 to PA0 ADC |
+- [电流板原理图](电流板原理图_Howland恒流源.pdf)：电压转电流与升压电路资料。
+- [电流板 PCB 3D](电流板PCB_3D.pdf)：PCB 外观资料。
+- [原型连线实拍](../docs/assets/prototype-bench.jpeg)：课程答辩第 18 页。
+- [阻抗检测连接实拍](../docs/assets/impedance-bench.jpeg)：课程答辩第 11 页。
+
+原 README 曾列出 STM32 核心板原理图，但当前仓库未包含该文件。板卡版本、完整 BOM、可编辑 PCB 工程和核心板原理图仍需后续补齐。
+
+## 硬件链路
+
+答辩材料中的驱动链路由 LM5158 升压级和 OPA551UA / BCP56 Howland 恒流级组成，标称升压轨为 54 V。实际输出能力取决于供电、负载与器件状态，不能仅用电源轨电压作为负载端能力指标。
+
+负载电压通过 100 kΩ 与 4.7 kΩ 分压后送入 ADC。电阻负载与分压支路并联，固件对 104.7 kΩ 支路的影响进行补偿。
+
+## 当前固件引脚
+
+| 用途 | STM32 引脚 | 外设连接 |
+| --- | --- | --- |
+| 模拟控制 | PA4 / DAC1 | 恒流板控制输入 |
+| 电压采样 | PA0 / ADC1_IN0 | 分压网络采样点 |
+| 触屏发送 | PA2 / USART2_TX | 触屏 RX |
+| 触屏接收 | PA3 / USART2_RX | 触屏 TX |
+| 无线发送 | PB10 / USART3_TX | ESP32-C3 RX |
+| 无线接收 | PB11 / USART3_RX | ESP32-C3 TX |
+| 参考地 | GND | 按原理图和模块要求连接 |
+
+两路 STM32 串口均为 9600 bps、8N1。ESP32-C3 实际串口管脚和模块供电应按具体板型核对，不从裸芯片名称推断模块接口。
+
+## 台架记录
+
+答辩第 8 页的标定使用标称 2.2 kΩ 电阻，课程任务要求中的负载为 2 kΩ，二者应分别记录。当前照片和表格未完整提供负载实测值、容差、探测位置及仪器设置，详见[实验记录](../docs/validation.md)。
+
+本仓库按电阻负载教学原型说明，不提供人体连接或治疗操作指南。

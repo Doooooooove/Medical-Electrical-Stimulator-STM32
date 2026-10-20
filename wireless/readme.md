@@ -1,21 +1,38 @@
-# Wireless IoT Web Server (ESP32-C3 LuatOS)
+# ESP32-C3 无线网页与串口协议
 
-## 📌 Overview
-An asynchronous embedded Web server and AP controller running on the **AirM2M / LuatOS ESP32-C3** module.
+当前实现为 LuatOS 的 Wi-Fi SoftAP + HTTP 服务，由 UART 将命令传给 STM32。当前脚本不包含蓝牙控制、数据库或真实患者管理功能。
 
-## 🚀 Key Features
-- **Wi-Fi SoftAP**: Broadcasts `ESP32-Stimulator` network with captive web dashboard.
-- **RESTful HTTP API**:
-  - `/api/status`: Real-time telemetry (operating mode, frequency, pulse width, current, impedance).
-  - `/api/start` / `/api/stop`: Immediate stimulation start/stop commands.
-  - `/api/preset`: Prescription switching (Preset 1: Dysphagia NMES, Preset 2: Pain Relief TENS, Preset 3: Muscle Re-education).
-- **Serial Protocol Dispatcher**:
-  - Encapsulates single-byte `#` framed commands over UART to STM32.
+## 启动与访问
 
-## 🛠️ Flash Guide
-1. Connect ESP32-C3 via USB-C.
-2. Run automated flashing script:
-   ```bash
-   python build_and_flash.py
-   ```
-   Or use LuatTools to flash `LuatOS-SoC_V1004_ESP32C3.soc` and `main.lua`.
+1. 为具体 ESP32-C3 板卡加载匹配的 LuatOS 固件与 `main.lua`。
+2. 接好交叉 TX/RX 与参考地，确认模块供电和串口管脚。
+3. Lua 端 `uartid = 0`，9600 bps、8N1；STM32 端为 USART3，PB10 TX / PB11 RX。
+4. 当前脚本建立热点 **Medical-Stim**，演示口令为 `12341234`。
+5. 连接后，查看客户端分配的默认网关，在浏览器中打开该地址的 HTTP 80 端口。脚本未固定网关 IP，也未实现自动弹出的 captive portal。
+
+`build_and_flash.py` 是仓库保留的烧录辅助脚本。本次未运行烧录、模块固件或联网实机测试。
+
+## 代码中的实际接口
+
+| HTTP 请求 | UART 命令 | STM32 行为 |
+| --- | --- | --- |
+| `/plan?id=1` | `#1\r\n` | 设置指数衰减演示参数并启动 |
+| `/plan?id=2` | `#2\r\n` | 设置带直偏方波演示参数并启动 |
+| `/plan?id=3` | `#3\r\n` | 设置恒流演示参数并启动 |
+| `/cmd?act=up` | `#+\r\n` | 设定电流增加 1 mA |
+| `/cmd?act=down` | `#-\r\n` | 设定电流减少 1 mA |
+| `/cmd?act=toggle` | `#S\r\n` | 切换运行状态 |
+| `/cmd?act=stop` | `#0\r\n` | 设定电流归零并停止运行 |
+| `/status` | `#R\r\n` | 请求状态，网页返回缓存状态文本 |
+
+旧文档中的 `/api/start`、`/api/stop`、`/api/preset`、`/api/status` 与当前脚本不符，以上表为准。
+
+## 行为边界
+
+- “停止”经过 HTTP、ESP32 串口和 STM32 主循环，属于软件请求，不是物理断电或独立急停回路。
+- `/status` 请求后立即返回缓存文本，不能保证本次响应就是最新 MCU 状态。
+- 网页中的姓名和方案文字为静态演示内容，不应将其描述成已实现的病历系统或经验证的治疗处方。
+- 服务未实现应用层身份验证，使用固定演示热点口令。仅在隔离演示网络检查，不将当前接口视为生产远程控制服务。
+- 方案下发会启动输出；演示应使用已核对的电阻负载台架。
+
+更多源码差异和待测项目见[实验记录](../docs/validation.md)。

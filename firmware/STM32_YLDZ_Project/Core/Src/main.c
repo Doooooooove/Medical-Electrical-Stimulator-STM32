@@ -24,7 +24,7 @@
 #include "string.h"
 #include "stdio.h"
 #include "math.h"
-#include "tjc_usart_hmi.h"·
+#include "tjc_usart_hmi.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -791,7 +791,7 @@ int main(void)
   HAL_UART_Receive_IT(&huart3, &g_esp_rx_byte, 1); // 开启USART2接收中断
   HAL_ADCEx_Calibration_Start(&hadc1);         // 校准ADC1
   HAL_DAC_Start(&hdac, DAC_CHANNEL_1);         // 启动DAC通道1 (PA4)
-  HAL_TIM_Base_Start_IT(&htim1);               // TIM1 1000Hz (1ms) 中断
+  HAL_TIM_Base_Start_IT(&htim1);               // TIM1 20kHz (50us) 中断
   HAL_Delay(300);                              // 稳压延时
 
   // 开机全量同步屏幕控件
